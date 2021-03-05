@@ -1,11 +1,10 @@
-# Net Market
+# Net Market (EN)
 
-## 開発環境(Environment)
+## Development Setup
 
-### 前提条件
-- githubアカウントの取得
+### Prerequisites 
+- Github account
 - Docker for Mac(https://docs.docker.com/docker-for-mac/install/) or Docker for Windows(https://www.docker.com/docker-windows)　
-のインストール
 
 ### Clone repository
 
@@ -16,7 +15,7 @@ $ cd projects
 $ git clone https://github.com/THitokuse/net-market.git
 ```
 
-### databaseを作成
+### Creating a Database
 ```console
 // build docker image
 $ docker-compose build
@@ -27,25 +26,26 @@ $ docker-compose run web bundle exec rake db:migrate
 $ docker-compose run web bundle exec rake db:seed
 ```
 
-### reCAPTCHAを導入
+### Introducing reCAPTCHA
 
-開発環境でユーザー新規登録、ログイン機能で使用するため、reCAPTCHAをそれぞれの環境で導入が必要
+It is necessary to install reCAPTCHA in each environment because it is used for new user registration and login function in the development environment. 
 https://www.google.com/recaptcha/intro/v3.html
 
-- 上記でreCAPTCHAを作成
-- shelに作成時、生成されたSITE_KEYとPRIVATE_KEYの追加(ex: ~ /.bash_profile)
+- Create reCAPTCHA above
+- Add SITE_KEY and PRIVATE_KEY generated when creating to shell (ex: ~ /. Bash_profile) 
+- 
 ```
 export RECAPTCHA_SITE_KEY="xxxxxxxxx"
 export RECAPTCHA_PRIVATE_KEY="xxxxxxxx"
 ```
 
-### local serverを立ち上げる
+### Launching local server
 ```console
 $ docker-compose up
 ```
 アクセス　http://localhost:3000
 
-### 開発サーバーを止める
+### Stop the development server
 ```console
 $ docker-compose down
 ```
@@ -55,7 +55,7 @@ $ docker-compose down
 $ docker-compose run web bundle install
 ```
 
-### docker bashにログインする
+### Login to Docker bash
 ```console
 $ docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
@@ -63,9 +63,9 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 d47e7254918d        mysql:5.6           "docker-entrypoint.s…"   43 hours ago        Up 24 seconds       0.0.0.0:3306->3306/tcp   mercari_db_1
 $ docker exec -it mercari_web_1 /bin/bash
 ```
-ここでデバックなどのmercariの操作を行うことができる。
+Here you can perform operations such as debugging. 
 
-### net-market dbにログインする
+### Logging in to net market db
 ```console
 $ docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
@@ -85,47 +85,48 @@ mysql> show databases;
 | performance_schema  |
 +---------------------+
 ```
-ここでnet-marketのDBの操作を行うことが可能。
 
-また、Sequel proでの閲覧も可能(docker-compose upした状態)
-sequel proで以下を設定する。
+It is possible to operate the DB of net-market here.
+
+You can also browse with Sequel pro (docker-compose up)
+Set the following in sequel pro. 
 ```
-標準を選択
+Select Standards
 
-名前: mercari_localhost
-ホスト: 127.0.0.1
-ユーザー名: root
-パスワード: mercari_umeda
-ポート: 4306
+Name: mercari_localhost
+Localhost: 127.0.0.1
+Username: root
+Password: mercari_umeda
+Port: 4306 
 ```
-で接続する。
+Connect with.
 
-### docker環境でRSpecを実行する
+### Run RSpec in docker environment.
 ```
-1.  docker-compose run web bundle exec rake db:migrate RAILS_ENV=test
-→テスト環境でmigrateしてあげる
-2. docker-compose run web bundle exec rspec spec/controllers/●●●●_controller_spec.rb
-→指定したテストファイルを実行する
+1. docker-compose run web bundle exec rake db: migrate RAILS_ENV = test
+→ You will migrate in the test environment
+2. docker-compose run web bundle exec rspec spec / controllers / ●●●● _controller_spec.rb
+→ Execute the specified test file 
 ```
 
-### docker上のMYSQLに日本語対応を追加する
+### Add Japanese support to MYSQL on docker 
 
-通常だと、latin対応になっているので、テーブル上に日本語を入力しても表示されない。
-そこで、/etc/mysql/my.cnfに記述し上書きすることで日本語設定にすることが出来る。
+Normally, it is latin compatible, so even if you enter Japanese on the table, it will not be displayed.
+Therefore, you can set it to Japanese by writing it in /etc/mysql/my.cnf and overwriting it.
 
-ターミナル上でmy.cnfを編集したいのだが、vimが入っていないので、vimを入れてあげる。
+I want to edit my.cnf on the terminal, but vim is not included, so I will include vim. 
 ```
 RUN ["apt-get", "update"]
 RUN ["apt-get", "install", "-y", "vim"]
 ```
-Build後、以下のコードを実行
+After Build, execute the following code 
 ```
 $ docker exec -it mercari_db_1 /bin/bash
 # apt-get update
 # apt-get install vim
 # vim etc/mysql/my.cnf
 ```
-my.cnfの中で以下のコードを記述して保存
+Write and save the following code in my.cnf
 ```
 [mysqld]
 character-set-server=utf8
@@ -134,30 +135,30 @@ collation-server=utf8_general_ci
 [client]
 default-character-set=utf8
 ```
-もう一度Buildし直して、MYSQLを確認する
+Build again and check MYSQL
 
-### Docker コマンドメモ
+### Docker command memo
 
 ```
-# Rubyのバージョンを確認する
+# Check the Ruby version
 $ docker-compose run --rm web ruby -v
 
-# Railsのバージョンを確認する
+# Check Rails version
 $ docker-compose run --rm workspace php artisan -v
 
-# rails routesをしたい
+# Rail routes
 $ docker-compose run --rm web rails routes
 ```
 
-## ネットマーケットDB設計
+## Net market DB design
 
-### ER図
+### Diagram
 https://www.draw.io/#G1OzJugJEFpL-U19UEEycdfbTGCAxYNAYY
 
-![ネットマーケットER図](https://user-images.githubusercontent.com/45042275/55183070-5f939400-51d2-11e9-9950-6fe0605e4792.png)
+![Net market ER diagram ](https://user-images.githubusercontent.com/45042275/55183070-5f939400-51d2-11e9-9950-6fe0605e4792.png)
 
-## Usersテーブル
-- ネットマーケットユーザ用テーブル
+## Users table
+--Table for net market users
 
 |Column|Type|Options|
 |------|----|-------|
@@ -180,7 +181,7 @@ https://www.draw.io/#G1OzJugJEFpL-U19UEEycdfbTGCAxYNAYY
 |self_introduce|text|-------|
 
 - prefecture_code
-jp_prefecture導入
+jp_prefecture導入 / jp_prefecture(import)
 
 ### Association
 - has_many items
@@ -190,8 +191,8 @@ jp_prefecture導入
 - has_many notice
 
 
-## Itemsテーブル
-- 商品出品テーブル
+## Items table
+--Product listing table 
 
 |Column|Type|Options|
 |------|----|-------|
@@ -212,11 +213,11 @@ jp_prefecture導入
 |seller|reference|null: false, foreign_key: true|
 
 - prefecture_code
-jp_prefecture導入
+jp_prefecture導入 / jp_prefecture(import)
 
 ### enum
-- 商品ステータスenum
-- Status: { 出品中:1, 取引中:2, 売却済:3 }
+--Product status enum
+--Status: {Selling: 1, Trading: 2, Sold: 3} 
 
 
 ### Association
@@ -235,8 +236,8 @@ jp_prefecture導入
 - belongs_to size
 - belongs_to user
 
-## Item_imagesテーブル
-- 商品画像テーブル
+## Item_images table
+--Product image table 
 
 |Column|Type|Options|
 |------|----|-------|
@@ -249,8 +250,8 @@ jp_prefecture導入
 - belongs_to item
 
 
-## Salersテーブル
-- 購入者中間テーブル
+## Salers table
+--Buyer intermediate table 
 
 |Column|Type|Options|
 |------|----|-------|
@@ -262,8 +263,8 @@ jp_prefecture導入
 - belongs_to user
 - belongs_to item
 
-## Commentsテーブル
-- 出品中の商品に対するコメント用テーブル
+## Comments table
+--Comment table for items on sale 
 
 |Column|Type|Options|
 |------|----|-------|
@@ -275,10 +276,9 @@ jp_prefecture導入
 ### Association
 - belongs_to user
 - belongs_to item
-
-
-## Evalutesテーブル
-- ユーザー評価テーブル
+- 
+## Evalutes table
+--User evaluation table 
 
 |Column|Type|Options|
 |------|----|-------|
@@ -291,11 +291,11 @@ jp_prefecture導入
 - belongs_to evalute_types
 
 
-## Evalute_typesテーブル
-- 評価種類マスターテーブル
-1. 良い
-2. 普通
-3. 悪い
+## Evalute_types table
+--Evaluation type master table
+1. Good
+2. Normal
+3. Bad 
 
 |Column|Type|Options|
 |------|----|-------|
@@ -306,8 +306,8 @@ jp_prefecture導入
 - has_many evalutes
 
 
-## Todosテーブル
-- やることリストテーブル
+## Todos table
+--To-do list table 
 
 |Column|Type|Options|
 |------|----|-------|
@@ -319,8 +319,8 @@ jp_prefecture導入
 - belongs_to user
 
 
-## Brandsテーブル
-- ブランドテーブル
+## Brands table
+--Brand table 
 
 |Column|Type|Options|
 |------|----|-------|
@@ -330,9 +330,8 @@ jp_prefecture導入
 ### Association
 - has_many items
 
-
-## Upper_categoriesテーブル
-- カテゴリーテーブル
+## Upper_categories table
+--Category table 
 
 |Column|Type|Options|
 |------|----|-------|
@@ -343,8 +342,8 @@ jp_prefecture導入
 - has_many items
 - has_many middle_categories
 
-## Middle_categoriesテーブル
-- カテゴリーテーブル
+## Middle_categories table
+--Category table 
 
 |Column|Type|Options|
 |------|----|-------|
@@ -359,8 +358,8 @@ jp_prefecture導入
 - belongs_to upper_category
 - belongs_to size_type
 
-## Lower_categoriesテーブル
-- カテゴリーテーブル
+## Lower_categories table
+--Category table
 
 |Column|Type|Options|
 |------|----|-------|
@@ -372,8 +371,8 @@ jp_prefecture導入
 - has_many items
 - belongs_to middle_category
 
-## Size_typeテーブル
-- サイズの種類テーブル
+## Size_type table
+--Size type table
 
 |Column|Type|Options|
 |------|----|-------|
@@ -384,8 +383,8 @@ jp_prefecture導入
 - has_many sizes
 - has_many middle_categories
 
-## Sizeテーブル
-- サイズ(単位)テーブル
+## Size table
+--Size (unit) table
 
 |Column|Type|Options|
 |------|----|-------|
@@ -397,9 +396,8 @@ jp_prefecture導入
 - has_many items
 - belongs_to size_type
 
-
-## Likeテーブル
-- いいねテーブル
+## Like table
+--Like table
 
 |Column|Type|Options|
 |------|----|-------|
@@ -411,9 +409,19 @@ jp_prefecture導入
 - belongs_to item
 - belongs_to user
 
+## Delivery_method table
+--Delivery method master table
 
-## Delivery_methodテーブル
-- 配送方法マスターテーブル
+|Column|Type|Options|
+|------|----|-------|
+|id|integer(11)|AI, PRIMARY_KEY|
+|name|varchar(255)|null: false|
+
+### Association
+- has_many items
+
+## Delivery_burden table
+--Shipping fee burden master table
 
 |Column|Type|Options|
 |------|----|-------|
@@ -424,8 +432,8 @@ jp_prefecture導入
 - has_many items
 
 
-## Delivery_burdenテーブル
-- 配送料の負担マスターテーブル
+## Delivery_date table
+-Estimated shipping date Master table
 
 |Column|Type|Options|
 |------|----|-------|
@@ -435,21 +443,8 @@ jp_prefecture導入
 ### Association
 - has_many items
 
-
-## Delivery_dateテーブル
--　発送日の目安マスターテーブル
-
-|Column|Type|Options|
-|------|----|-------|
-|id|integer(11)|AI, PRIMARY_KEY|
-|name|varchar(255)|null: false|
-
-### Association
-- has_many items
-
-
-## Newsテーブル
-- メルカリ全員分のニューステーブル
+## News table
+--News table for all Mercari
 
 |Column|Type|Options|
 |------|----|-------|
@@ -457,8 +452,8 @@ jp_prefecture導入
 |news|text|null: false|
 
 
-## Noticeテーブル
-- 個々のニュースを格納するためのニュース
+## Notice table
+--News for storing individual news
 
 |Column|Type|Options|
 |------|----|-------|
