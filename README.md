@@ -1,10 +1,10 @@
-# Net Market (EN)
+### Net Market (EN) translation
 
 ## Development Setup
 
 ### Prerequisites 
-- Github account
-- Docker for Mac(https://docs.docker.com/docker-for-mac/install/) or Docker for Windows(https://www.docker.com/docker-windows)　
+- Github
+- Docker for [Mac](https://docs.docker.com/docker-for-mac/install/) or Docker for [Windows](https://www.docker.com/docker-windows)　
 
 ### Clone repository
 
@@ -43,7 +43,7 @@ export RECAPTCHA_PRIVATE_KEY="xxxxxxxx"
 ```console
 $ docker-compose up
 ```
-アクセス　http://localhost:3000
+access at http://localhost:3000
 
 ### Stop the development server
 ```console
